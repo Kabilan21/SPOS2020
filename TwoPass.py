@@ -8,9 +8,18 @@ register= [("AREG","1"),("BREG","2"),("CREG","3"),("DREG","4")]
 
 symtab = []
 
+
+symtable = []
+
 lc = 0
 
 this_entry = 0 
+
+def symtabassign(symbol,loc):
+    for sym,address,length in symtab:
+        if symbol == sym:
+            symtable.append((sym,loc,1))
+    
 
 def rel_check(word):
     for reg,num in relate:
@@ -90,7 +99,9 @@ for coding in code:
                 lc = lc + 1
                 line = f"({state},{number})" 
                 print(line)
-                
+            if word == 'END':
+                line = f"({state},{number})" 
+                print(line)    
                 
     if coding.split()[0] == 'AGAIN':
         symtab.append((coding.split()[0],lc,1))
@@ -107,25 +118,28 @@ for coding in code:
             for word2,state2,number2 in opcode:
                 if coding.split()[1] == word2:
                     if coding.split()[1] == 'DS':
+                        symtabassign(coding.split()[0],lc)
                         lc = lc + 1
                         line = f"({state2},{number2})(c,{coding.split()[2]})" 
                         print(line)
                     if coding.split()[1] == 'DC':
+                        symtabassign(coding.split()[0],lc)
                         lc = lc + 1
                         line = f"({state2},{number2})(c,{coding.split()[2]})" 
                         print(line)
                         
+
+for sym,address,loc in symtab:
+    flag = True
+    for sym1,address1,loc1 in symtable:
+        if sym1 == sym:
+            flag = False
+            break
+    if flag:
+        symtable.append((sym,address,loc))
             
-
-
-
-
-
-    
-    cont = cont +1
-    if cont == 11:
-        pass   
-print(symtab,lc)                
+ 
+print(symtable,lc)                
                 
                 
                 
